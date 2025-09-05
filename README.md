@@ -8,14 +8,27 @@ One use case is if you have a website that you want to display on a tablet or mo
 
 The app needs some work  and here is a prompt that worked for me to integrate with a web app.  This creates a panel on /settings page to add/delete displays.
 
+## Features
+
+- **PIN-based Authentication**: Secure numeric PIN authentication with configurable length
+- **Device Registration**: Register mobile devices to user accounts via HTTPS API
+- **PIN Strength Validation**: Prevents weak PINs (sequential, repetitive, common patterns)
+- **Session Management**: Track user activity and session validity
+- **Flexible Integration**: Designed to work with any Ecto-compatible database
+
+
 ## Prompt Based Installation
+
 ### Prompt 1
+
 ```
 add hex package 'tablet_auth' package to mix.exs.  
 run mix deps.get after adding to mix.exs.  
 run all tests to ensure they still work.
 ```
+
 ### Prompt 2
+
 ```
 review the hex documentation for 'tablet_auth' then
 create a section in the /settings page to manage tablets/displays with functioinality as follows using the tablet_auth package.
@@ -52,14 +65,7 @@ create tests and ensure passing.
 
 ```
 
-## Features
 
-- **PIN-based Authentication**: Secure numeric PIN authentication with configurable length
-- **Device Registration**: Register mobile devices to user accounts via HTTPS API
-- **Account Security**: Built-in protection against brute force attacks with account lockout
-- **PIN Strength Validation**: Prevents weak PINs (sequential, repetitive, common patterns)
-- **Session Management**: Track user activity and session validity
-- **Flexible Integration**: Designed to work with any Ecto-compatible database
 
 ## Installation
 
