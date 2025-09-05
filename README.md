@@ -2,6 +2,56 @@
 
 A secure authentication system designed for tablet and mobile device applications requiring simple PIN-based access with device registration capabilities.
 
+It provides a simple way to do pin based registration of an ipad or tablet acting as a display so that the user does not need to enter a password on the display.  Similar to when apple tv asks you for a pin to register your new apple tv to your account.
+
+One use case is if you have a website that you want to display on a tablet or mobile app without logging in so if the tablet is stolen you are not worried about your information being taken as the tablet only knows about a website address like tablets/:secret.  Or another way to think about it is you have a nice web page that you want your users to share with their friends they can do that without sharing their username/password.
+
+The app needs some work  and here is a prompt that worked for me to integrate with a web app.  This creates a panel on /settings page to add/delete displays.
+
+## Prompt Based Installation
+### Prompt 1
+```
+add hex package 'tablet_auth' package to mix.exs.  
+run mix deps.get after adding to mix.exs.  
+run all tests to ensure they still work.
+```
+### Prompt 2
+```
+review the hex documentation for 'tablet_auth' then
+create a section in the /settings page to manage tablets/displays with functioinality as follows using the tablet_auth package.
+
+page to show from a tablet /conditions
+
+Tablet Registration from /settings Page:
+
+  1. Generate PIN for New Tablet
+  - Click "Generate PIN for New Tablet" button (lines 62-69)
+  - Creates a new Display record with a 6-hour valid PIN
+  - Shows the PIN and registration URL /tablets/register
+
+  2. Registration Process
+  - Tablet goes to /tablets/register and enters the PIN
+  - PIN expires after 6 hours for security
+  - Once registered, tablet appears in the list on the /settings page
+
+  3. Manage Registered Tablets
+  - Shows all registered tablets with their friendly names associated with a user.
+  - Each tablet shows:
+    - Name 
+    - Copy URL button to get tablet access link
+    - Open in new tab button
+    - Remove tablet button
+
+
+  5. Access Methods
+  - Each tablet gets a unique access URL: /tablets/{secret_key}
+  - PIN-based registration for new devices
+  - the access URL will display the page defined at top of the prompt in this case /conditions
+
+create tests and ensure passing.
+
+```
+
 ## Features
 
 - **PIN-based Authentication**: Secure numeric PIN authentication with configurable length
