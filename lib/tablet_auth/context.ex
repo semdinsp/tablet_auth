@@ -2,7 +2,6 @@ defmodule TabletAuth.Context do
   @moduledoc false
   
   alias TabletAuth.{User, Security}
-  import Ecto.Query
 
   def create_tablet_user(attrs, opts \\ []) do
     with {:ok, validated_attrs} <- Security.validate_pin_strength(attrs, opts),
@@ -40,15 +39,13 @@ defmodule TabletAuth.Context do
     end
   end
 
-  def update_last_activity(user_id) do
+  def update_last_activity(_user_id) do
     # This would typically update the database
     # Implementation depends on the repo configuration
     {:ok, DateTime.utc_now()}
   end
 
-  def session_valid?(user_id, opts \\ []) do
-    session_timeout = Keyword.get(opts, :session_timeout_minutes, 60)
-    
+  def session_valid?(_user_id, _opts \\ []) do
     # This would typically check the database for last_activity
     # and compare with current time minus session_timeout
     # For now, returning true as a placeholder
@@ -75,7 +72,7 @@ defmodule TabletAuth.Context do
     end
   end
 
-  defp is_locked?(user, lockout_duration) do
+  defp is_locked?(user, _lockout_duration) do
     case user.locked_until do
       nil -> false
       locked_until ->
@@ -108,14 +105,14 @@ defmodule TabletAuth.Context do
     %{user | last_activity: DateTime.utc_now()}
   end
 
-  defp find_user_by_pin_context(opts) do
+  defp find_user_by_pin_context(_opts) do
     # This would typically query the database based on context
     # For tablet mode, this might find the single active tablet user
     # Implementation depends on the specific use case and repo configuration
     nil
   end
 
-  defp find_user_by_device(device_id, _repo) do
+  defp find_user_by_device(_device_id, _repo) do
     # This would typically query the database for a user with the given device_id
     # Implementation depends on the repo configuration
     nil

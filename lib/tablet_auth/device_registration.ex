@@ -1,8 +1,8 @@
 defmodule TabletAuth.DeviceRegistration do
   @moduledoc false
   
-  alias TabletAuth.{User, Security}
-  import Ecto.Query
+  # Note: This module contains placeholder functions for device registration
+  # Applications should implement the database operations according to their needs
 
   def register_device(device_attrs, user_lookup, opts \\ []) do
     repo = get_repo(opts)
@@ -85,11 +85,12 @@ defmodule TabletAuth.DeviceRegistration do
     device_name = Map.get(device_attrs, :device_name) || Map.get(device_attrs, "device_name")
     
     # Check if device is already registered
-    case device_already_registered?(device_id, repo) do
-      true ->
-        {:error, :device_already_registered}
-      false ->
-        register_new_device(user, device_id, device_name, repo)
+    # Note: This is a placeholder implementation that always allows registration
+    # Applications should implement proper duplicate checking
+    if device_already_registered?(device_id, repo) do
+      {:error, :device_already_registered}
+    else
+      register_new_device(user, device_id, device_name, repo)
     end
   end
 
@@ -121,7 +122,7 @@ defmodule TabletAuth.DeviceRegistration do
     end
   end
 
-  defp device_already_registered?(device_id, _repo) do
+  defp device_already_registered?(_device_id, _repo) do
     # This would typically query the database to check if device_id exists
     # Implementation depends on the repo configuration
     false
@@ -145,7 +146,7 @@ defmodule TabletAuth.DeviceRegistration do
     {:error, :not_implemented}
   end
 
-  defp find_user_by_device(device_id, _repo) do
+  defp find_user_by_device(_device_id, _repo) do
     # This would typically query the database for a user with the given device_id
     # Implementation depends on the repo configuration
     nil

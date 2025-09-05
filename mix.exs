@@ -4,7 +4,7 @@ defmodule TabletAuth.MixProject do
   def project do
     [
       app: :tablet_auth,
-      version: "0.1.0",
+      version: "0.1.3",
       elixir: "~> 1.16",
       description: description(),
       package: package(),

@@ -66,7 +66,22 @@ defmodule TabletAuth.User do
 
   @doc """
   Verifies a PIN against the stored hash.
+  
+  This function runs in constant time to prevent timing attacks,
+  even when the user is nil or invalid.
   """
+  def verify_pin(nil, pin) do
+    # Run a dummy hash to maintain constant time and prevent timing attacks
+    Bcrypt.verify_pass(pin, "$2b$12$dummy.hash.to.prevent.timing.attacks.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+    false
+  end
+
+  def verify_pin(user, pin) when is_nil(user.pin_hash) do
+    # Run a dummy hash to maintain constant time
+    Bcrypt.verify_pass(pin, "$2b$12$dummy.hash.to.prevent.timing.attacks.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+    false
+  end
+
   def verify_pin(user, pin) do
     Bcrypt.verify_pass(pin, user.pin_hash)
   end

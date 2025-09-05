@@ -25,6 +25,73 @@ end
 
 ## Usage
 
+TabletAuth supports two registration patterns:
+
+1. **Tablet User Authentication** - Direct PIN authentication for tablet users
+2. **Display-Based Registration** - PIN-based tablet registration using display entities (recommended for family photo sharing apps)
+
+### Display-Based Tablet Registration (Recommended)
+
+This is the primary approach for applications that manage displays/frames that can have tablets registered to them.
+
+#### Generating a Registration PIN
+
+```elixir
+# Generate a PIN for a display that tablets can use to register
+case TabletAuth.generate_display_pin(display, repo: MyApp.Repo) do
+  {:ok, updated_display} -> 
+    # Display now has registration_pin and pin_expires_at set
+    # Share this PIN with users to register their tablets
+  {:error, changeset} -> 
+    # Handle validation errors
+end
+```
+
+#### Registering a Tablet with PIN
+
+```elixir
+attrs = %{friendly_name: "Kitchen Tablet"}
+
+opts = [
+  repo: MyApp.Repo,
+  display_schema: MyApp.Display,  # Your display schema (optional if using default)
+  user_display_schema: MyApp.UsersDisplays,  # Association schema (optional)
+  post_schema: MyApp.Post,  # For finding best parent display (optional)
+  pubsub_module: Phoenix.PubSub,  # For broadcasting updates (optional)
+  broadcast_topic: "user_settings:{owner_id}"  # Topic pattern (optional)
+]
+
+case TabletAuth.register_tablet_with_pin("123456", attrs, opts) do
+  {:ok, %{tablet: tablet, association: association}} -> 
+    # Tablet registered successfully
+    # tablet.secret_key can be used for tablet access
+  {:error, :invalid_or_expired_pin} -> 
+    # Wrong or expired PIN
+  {:error, changeset} -> 
+    # Handle registration failure
+end
+```
+
+#### Looking Up Tablets
+
+```elixir
+# Validate a PIN (useful for API endpoints)
+case TabletAuth.validate_pin("123456", repo: MyApp.Repo) do
+  %Display{} = display -> 
+    # PIN is valid, display can be used for registration
+  nil -> 
+    # Invalid or expired PIN
+end
+
+# Get tablet by secret key (for tablet access)
+case TabletAuth.get_tablet_by_secret(secret_key, repo: MyApp.Repo) do
+  %Display{} = tablet -> 
+    # Tablet found
+  nil -> 
+    # Tablet not found
+end
+```
+
 ### Creating a Tablet User
 
 ```elixir
@@ -119,6 +186,40 @@ end
 ```
 
 ## Database Schema
+
+### For Display-Based Registration
+
+Create a migration for the displays table:
+
+```elixir
+defmodule MyApp.Repo.Migrations.CreateDisplays do
+  use Ecto.Migration
+
+  def change do
+    create table(:displays, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :title, :string, null: false
+      add :registration_pin, :string
+      add :pin_expires_at, :utc_datetime
+      add :secret_key, :string
+      add :friendly_name, :string
+      add :is_tablet, :boolean, default: false
+      add :tablet_parent_display, :binary_id
+      add :owner_id, :binary_id, null: false
+      
+      timestamps(type: :utc_datetime)
+    end
+    
+    create index(:displays, [:owner_id])
+    create index(:displays, [:registration_pin])
+    create index(:displays, [:secret_key])
+    create index(:displays, [:is_tablet])
+    create index(:displays, [:tablet_parent_display])
+  end
+end
+```
+
+### For Tablet User Authentication
 
 Create a migration for the tablet users table:
 
